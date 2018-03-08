@@ -34,6 +34,23 @@ directory.addAsset('pedity.com', {
   instructions: 'https://pedity.com',
   type: 'token',
 });
+   
+
+directory.addAnchor({
+  domain: 'edchain.io',
+  website: 'https://edchain.io',
+  logo: 'edchain.io',
+  color: '#2a8bc6',
+  displayName: 'edchain',
+});
+
+directory.addAsset('edchain.io', {
+  code: 'EDU',
+  issuer: 'GCKA6K5PCQ6PNF5RQBF7PQDJWRHO6UOGFMRLK3DYHDOI244V47XKQ4GP',
+  instructions: 'https://edchain.io',
+  type: 'token',
+});
+
 
 directory.addAnchor({
   domain: 'nezly.com',
@@ -491,6 +508,10 @@ directory.addPair({
 });
 directory.addPair({
   baseBuying: ['XLM', 'native'],
+  counterSelling: ['EDU', 'edchain.io'],
+});
+directory.addPair({
+  baseBuying: ['XLM', 'native'],
   counterSelling: ['JPY', 'vcbear.net'],
 });
 directory.addPair({
@@ -779,6 +800,10 @@ directory.addDestination('GCXDR4QZ4OTVX6433DPTXELCSEWQ4E5BIPVRRJMUR6M3NT4JCVIDAL
 });
 directory.addDestination('GBVUDZLMHTLMZANLZB6P4S4RYF52MVWTYVYXTQ2EJBPBX4DZI2SDOLLY', {
   name: 'Pedity Issuer',
+  acceptedAssetsWhitelist: [],
+});
+directory.addDestination('GBVUDZLMHTLMZANLZB6P4S4RYF52MVWTYVYXTQ2EJBPBX4DZI2SDOLLZ', {
+  name: 'Edchain Issuer',
   acceptedAssetsWhitelist: [],
 });
 directory.addDestination('GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKYYF6AH6MVCMGWMRDNSWJPIH', {

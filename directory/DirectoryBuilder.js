@@ -35,7 +35,7 @@ function DirectoryBuilder() {
   };
 
   this.unknownAnchor = {
-    name: 'unknown',
+    name: 'edChain',
     logo: logos.unknown,
     assets: {},
   };
