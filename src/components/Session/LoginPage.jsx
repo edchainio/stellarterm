@@ -4,6 +4,7 @@ import Ellipsis from '../Ellipsis.jsx';
 import clickToSelect from '../../lib/clickToSelect';
 
 
+
 // TODO: Move this into Validator
 const isValidSecretKey = input => {
   try {
@@ -68,6 +69,7 @@ export default class LoginPage extends React.Component {
         })
       }
       this.props.d.session.handlers.logInWithSecret(this.state.secretInput);
+
     }
     this.handleGenerate = event => {
       let keypair = StellarSdk.Keypair.random();
@@ -77,7 +79,29 @@ export default class LoginPage extends React.Component {
           secretKey: keypair.secret(),
         }
       });
+      document.getElementById("fundBtn-id").style.visibility = "visible";
     }
+    this.handleFunding = () => {
+      document.getElementById("info-div").style.visibility = "visible";
+      document.getElementById("info-div").innerText = "Funding in progress...";
+      var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+      let pubkey = this.state.newKeypair['pubKey'];
+      var success = function(){
+        console.log("Successfully funded your account!");
+        document.getElementById("info-div").innerText = "Successfully funded your account!";
+        };
+
+      var error = function(e){
+        console.log("Failed to fund. Error: "+e);
+        document.getElementById("info-div").innerText = "Failed to fund the account : FriendBot error!";
+        };
+
+      server
+        .friendbot(pubkey)
+        .call()
+        .then(() => success())
+        .catch((err) => error(err));
+      }
   }
 
   componentDidMount() {
@@ -150,6 +174,12 @@ export default class LoginPage extends React.Component {
               <li><strong>Secret key</strong>: The secret key is used to access your account and make transactions. Keep this code safe and secure. Anyone with the code will have full access to the account and funds. If you lose the key, you will no longer be able to access the funds and there is no recovery mechanism.</li>
             </ul>
             <input type="submit" className="LoginPage__generate s-button" onClick={this.handleGenerate} value="Generate keypair"></input>
+
+            <button id="fundBtn-id" role="button" className="fundingBtn s-button" onClick={this.handleFunding} value="Generate keypair">Fund the account</button>
+
+            <span id="info-div" className="info-div-class"></span>
+
+
             {newKeypairDetails}
           </div>
           <div className="LoginPage__notes">
