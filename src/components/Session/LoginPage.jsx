@@ -3,6 +3,7 @@ const images = require('../../images');
 import Ellipsis from '../Ellipsis.jsx';
 import clickToSelect from '../../lib/clickToSelect';
 
+import axios from 'axios';
 
 
 // TODO: Move this into Validator
@@ -82,25 +83,69 @@ export default class LoginPage extends React.Component {
       document.getElementById("fundBtn-id").style.visibility = "visible";
     }
     this.handleFunding = () => {
+      var retry = false;
       document.getElementById("info-div").style.visibility = "visible";
       document.getElementById("info-div").innerText = "Funding in progress...";
-      var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
       let pubkey = this.state.newKeypair['pubKey'];
-      var success = function(){
-        console.log("Successfully funded your account!");
-        document.getElementById("info-div").innerText = "Successfully funded your account!";
-        };
+      axios.get("https://horizon-testnet.stellar.org/friendbot?addr="+pubkey).then(res=>{
+      var respTxt = res.request.responseURL;
+      console.log(respTxt);
+      if(respTxt.includes("friendbot")){
+      console.log(res.response);
+      console.log("Successfully funded your account!");
+      document.getElementById("info-div").innerText = "Successfully funded your account!";
+      }
+      else{
+      document.getElementById("info-div").innerText = "Retrying...";
+      axios.get("https://friendbot.stellar.org/?addr="+pubkey).then(res=>{
+      var anTxt = res.request.responseURL;
+      console.log(anTxt);
+      if(anTxt.includes("friendbot")){
+      console.log(res.response);
+      console.log("Successfully funded your account!");
+      document.getElementById("info-div").innerText = "Successfully funded your account!";
+      retry = false;
+      }
+      else{
+      document.getElementById("info-div").innerText = "Account funding failed. Friendbot error";
+      retry = false;
+      }
+      }).catch(err=>{
+      console.log("Error: "+err);
+      document.getElementById("info-div").innerText = "Account funding failed. Friendbot error";
+      retry = false;
+      });
+      }
+      }).catch(err=>{
+      console.log("Error: "+err);
+      document.getElementById("info-div").innerText = "Retrying...";
+      axios.get("https://friendbot.stellar.org/?addr="+pubkey).then(res=>{
+      var anTxt = res.request.responseURL;
+      console.log(anTxt);
+      if(anTxt.includes("friendbot")){
+      console.log(res.response);
+      console.log("Successfully funded your account!");
+      document.getElementById("info-div").innerText = "Successfully funded your account!";
+      retry = false;
+      }
+      else{
+      document.getElementById("info-div").innerText = "Account funding failed. Friendbot error";
+      retry = false;
+      }
+      }).catch(err=>{
+      console.log("Error: "+err);
+      document.getElementById("info-div").innerText = "Account funding failed. Friendbot error";
+      retry = false;
+      });
+      });
 
-      var error = function(e){
-        console.log("Failed to fund. Error: "+e);
-        document.getElementById("info-div").innerText = "Failed to fund the account : FriendBot error!";
-        };
+      console.log(retry);
 
-      server
-        .friendbot(pubkey)
-        .call()
-        .then(() => success())
-        .catch((err) => error(err));
+      if(retry){
+      
+      }
+
+      
       }
   }
 
